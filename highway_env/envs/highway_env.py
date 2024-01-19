@@ -37,12 +37,16 @@ class HighwayEnv(AbstractEnv):
                 "duration": 40,  # [s]
                 "ego_spacing": 2,
                 "vehicles_density": 1,
-                "collision_reward": -1,  # The reward received when colliding with a vehicle.
-                "right_lane_reward": 0.1,  # The reward received when driving on the right-most lanes, linearly mapped to
+                # The reward received when colliding with a vehicle.
+                "collision_reward": -1,
+                # The reward received when driving on the right-most lanes, linearly mapped to
+                "right_lane_reward": 0.1,
                 # zero for other lanes.
-                "high_speed_reward": 0.4,  # The reward received when driving at full speed, linearly mapped to zero for
+                # The reward received when driving at full speed, linearly mapped to zero for
+                "high_speed_reward": 0.4,
                 # lower speeds according to config["reward_speed_range"].
-                "lane_change_reward": 0,  # The reward received at each lane change action.
+                # The reward received at each lane change action.
+                "lane_change_reward": -5,
                 "reward_speed_range": [20, 30],
                 "normalize_reward": True,
                 "offroad_terminal": False,
@@ -66,7 +70,8 @@ class HighwayEnv(AbstractEnv):
 
     def _create_vehicles(self) -> None:
         """Create some new random vehicles of a given type, and add them on the road."""
-        other_vehicles_type = utils.class_from_path(self.config["other_vehicles_type"])
+        other_vehicles_type = utils.class_from_path(
+            self.config["other_vehicles_type"])
         other_per_controlled = near_split(
             self.config["vehicles_count"], num_bins=self.config["controlled_vehicles"]
         )
@@ -107,7 +112,9 @@ class HighwayEnv(AbstractEnv):
                 reward,
                 [
                     self.config["collision_reward"],
-                    self.config["high_speed_reward"] + self.config["right_lane_reward"],
+                    self.config["high_speed_reward"] +
+                    self.config["right_lane_reward"],
+                    self.config["lane_change_reward"],
                 ],
                 [0, 1],
             )
@@ -131,6 +138,7 @@ class HighwayEnv(AbstractEnv):
             "right_lane_reward": lane / max(len(neighbours) - 1, 1),
             "high_speed_reward": np.clip(scaled_speed, 0, 1),
             "on_road_reward": float(self.vehicle.on_road),
+            "lane_change_reward": -5,
         }
 
     def _is_terminated(self) -> bool:
