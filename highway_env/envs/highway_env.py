@@ -38,7 +38,7 @@ class HighwayEnv(AbstractEnv):
                 "ego_spacing": 2,
                 "vehicles_density": 1,
                 # The reward received when colliding with a vehicle.
-                "collision_reward": -1,
+                "collision_reward": -5,
                 # The reward received when driving on the right-most lanes, linearly mapped to
                 "right_lane_reward": 0.1,
                 # zero for other lanes.
@@ -46,7 +46,7 @@ class HighwayEnv(AbstractEnv):
                 "high_speed_reward": 0.4,
                 # lower speeds according to config["reward_speed_range"].
                 # The reward received at each lane change action.
-                "lane_change_reward": -5,
+                "lane_change_reward": -0.1,
                 "reward_speed_range": [20, 30],
                 "normalize_reward": True,
                 "offroad_terminal": False,
@@ -138,7 +138,7 @@ class HighwayEnv(AbstractEnv):
             "right_lane_reward": lane / max(len(neighbours) - 1, 1),
             "high_speed_reward": np.clip(scaled_speed, 0, 1),
             "on_road_reward": float(self.vehicle.on_road),
-            "lane_change_reward": -5,
+            "lane_change_reward": -0.1,
         }
 
     def _is_terminated(self) -> bool:
